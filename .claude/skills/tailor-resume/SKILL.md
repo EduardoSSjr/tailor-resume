@@ -34,7 +34,7 @@ Também nunca use texto oculto, cor igual ao fundo, ou blocos soltos de palavras
 4. **Reescreva as seções editáveis** com foco na vaga:
    - Reordene os itens de `Perfil e Competências` colocando primeiro o que é mais relevante para a vaga.
    - Ajuste a redação do `Objetivo` e dos bullets de Experiência/Projetos para usar, quando genuinamente verdadeiro, termos e palavras-chave que aparecem na vaga — sem alterar o fato descrito, só a forma de descrevê-lo.
-   - Você pode omitir itens editáveis pouco relevantes à vaga, mas não pode adicionar itens novos. (Isso é só sobre relevância — esta versão da skill não verifica nem tenta controlar contagem de páginas; ver passo 6.)
+   - Você pode omitir itens editáveis pouco relevantes à vaga, mas não pode adicionar itens novos. (Isso é só sobre relevância — o controle de contagem de páginas em si é automático e acontece no passo 7.)
 
 5. **Defina a pasta da aplicação**: `aplicacoes/<empresa>-<cargo>-<AAAA-MM>/` (mês/ano atual), a partir da raiz do projeto do passo 1. Se essa pasta já existir (segunda aplicação para a mesma empresa/cargo no mesmo mês), acrescente um sufixo numérico: `-2`, `-3`, etc., até chegar num nome que não existe ainda. Nunca sobrescreva uma aplicação anterior.
 
@@ -44,16 +44,21 @@ Também nunca use texto oculto, cor igual ao fundo, ou blocos soltos de palavras
 
    Rode até 2 vezes se necessário para resolver referências. Se a compilação falhar, leia o `.log` gerado, corrija o `.tex` e recompile — no máximo **3 tentativas de correção** no total. Se ainda assim não compilar, pare, explique o erro ao usuário e não entregue um PDF quebrado.
 
-   Esta versão da skill **não** verifica nem corrige contagem de páginas — isso é tratado em uma extensão futura da skill. Por enquanto, apenas confirme que o PDF foi gerado sem erros de compilação.
+7. **Aplique a regra de 1 página.** Depois de compilar com sucesso, confira a contagem de páginas que o `pdflatex` imprime na forma `(N page, ...)` / `(N pages, ...)`, no stdout ou no `.log`. Extraia com um padrão como `grep -oE "\([0-9]+ pages?," curriculo.log` — não procure pela linha inteira `Output written on ...`, porque quando o caminho da pasta é longo essa linha pode quebrar no meio (o parêntese com a contagem de páginas, porém, sempre fica intacto).
 
-   Depois de compilar com sucesso, apague os arquivos auxiliares que o `pdflatex` gerou na pasta da aplicação (`curriculo.aux`, `curriculo.log`, `curriculo.out`); só `curriculo.tex` e `curriculo.pdf` devem sobrar dessa etapa.
+   - Se **N = 1**, siga direto para a limpeza de arquivos auxiliares, abaixo.
+   - Se **N > 1**, corte o item editável menos relevante à vaga que ainda está no `.tex` — um bullet de `Perfil e Competências`, de Experiência ou de Projetos. **Nunca** corte conteúdo de seção fixa, e nunca remova um `\role{...}` ou `\project{...}` inteiro (a vaga/empresa/data em si é fixa; só os bullets dentro dele são editáveis). Recompile e confira a contagem de novo. Repita até caber.
+   - Ordem de prioridade do corte (do primeiro a cortar para o último): (a) os últimos itens de `Perfil e Competências` — já ficaram no fim da lista por serem os menos relevantes à vaga, conforme o passo 4; (b) bullets de experiências mais antigas ou menos relacionadas à vaga; (c) bullets de Projetos menos alinhados à vaga.
+   - **Limite de cortes razoáveis** — pare de cortar automaticamente, mesmo que ainda esteja em mais de 1 página, assim que qualquer uma destas condições for atingida: (i) já foram feitas 5 rodadas de corte + recompilação; (ii) o próximo corte deixaria `Perfil e Competências` com menos de 4 itens; (iii) o próximo corte deixaria algum `\role` ou `\project` sem nenhum bullet. Ao atingir o limite sem caber em 1 página, **pare, avise o usuário explicitamente** (quantas páginas o PDF ficou e o que já foi cortado) e entregue os arquivos do jeito que estão — não continue cortando além do razoável.
+   - Um currículo que já compila em 1 página **não sofre nenhum corte**.
 
-7. **Salve a vaga original** em `vaga.md`, dentro da mesma pasta da aplicação, com o texto exatamente como o usuário colou.
+   Independentemente do resultado, depois de a contagem de páginas estar resolvida (coube em 1, ou os cortes razoáveis se esgotaram), apague os arquivos auxiliares que o `pdflatex` gerou na pasta da aplicação (`curriculo.aux`, `curriculo.log`, `curriculo.out`); só `curriculo.tex` e `curriculo.pdf` devem sobrar dessa etapa.
 
-8. **Entregue um resumo curto** (2 a 4 linhas) do que foi priorizado/reescrito — por exemplo, quais competências foram colocadas em destaque e por quê. Não peça aprovação antes de finalizar; os arquivos já estão salvos quando você reporta o resumo.
+8. **Salve a vaga original** em `vaga.md`, dentro da mesma pasta da aplicação, com o texto exatamente como o usuário colou.
+
+9. **Entregue um resumo curto** (2 a 4 linhas) do que foi priorizado/reescrito — por exemplo, quais competências foram colocadas em destaque e por quê. Se algum corte automático do passo 7 foi aplicado, mencione o que foi cortado. Se o limite de cortes foi atingido sem caber em 1 página, esse é o aviso explícito ao usuário — não é opcional. Não peça aprovação antes de finalizar; os arquivos já estão salvos quando você reporta o resumo.
 
 ## O que esta versão NÃO faz (fora de escopo aqui)
 
-- Não corta conteúdo automaticamente se o PDF passar de 1 página
 - Não aceita vaga por link ou arquivo, só texto colado
 - Não traduz para inglês
