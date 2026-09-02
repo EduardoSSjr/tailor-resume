@@ -77,3 +77,16 @@ Também nunca use texto oculto, cor igual ao fundo, ou blocos soltos de palavras
 
 - Não traduz para inglês
 - Não consegue buscar links de sites de vaga com bloqueio anti-bot (ATS como InHire, Gupy, Kenoby, LinkedIn) — ver aviso de limitação conhecida acima; nesses casos, use texto colado ou arquivo
+
+## Instalação
+
+Esta skill é instalada globalmente via **junction do NTFS** (`mklink /J`), não por cópia: `C:\Users\edxlty\.claude\skills\tailor-resume` aponta para `C:\Users\edxlty\projects\tailor-resume\.claude\skills\tailor-resume`. Isso mantém o repositório do projeto como única fonte de verdade — qualquer edição neste arquivo já vale globalmente, sem precisar reinstalar nem sincronizar duas cópias — e permite que a skill seja reconhecida em qualquer pasta de trabalho aberta no Claude Code nesta máquina (CLI, app desktop ou extensão de IDE), não só dentro deste projeto.
+
+Symlink normal (`New-Item -ItemType SymbolicLink`) exige privilégio de administrador no Windows; a junction não exige. Se a junction for perdida (ex: reinstalação do Windows, nova máquina), recrie com:
+
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Out-Null
+cmd /c mklink /J "$env:USERPROFILE\.claude\skills\tailor-resume" "$env:USERPROFILE\projects\tailor-resume\.claude\skills\tailor-resume"
+```
+
+Validado com smoke test: rodando `claude -p` a partir de uma pasta fora do projeto, tanto o gatilho automático (colar uma vaga) quanto o comando explícito `/tailor-resume` reconheceram a skill corretamente e geraram a saída nos caminhos absolutos certos do projeto (`aplicacoes/`, `docs/EduardoSoldiCV.tex`), nunca relativos à pasta de onde a sessão foi aberta.
