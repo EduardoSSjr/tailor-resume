@@ -1,5 +1,23 @@
-# Dados pessoais - nunca versionar
-docs/EduardoSoldiCV.tex
-docs/EduardoSoldiCV.pdf
-docs/InformacoesAdicionais.md
+# ── Dados pessoais ────────────────────────────────────────────────
+# Regra: tudo em docs/ e aplicacoes/ é dado pessoal por padrão. Qualquer
+# arquivo que você colocar aí é ignorado automaticamente, sem precisar
+# editar este arquivo — inclusive o seu currículo, com o nome que for.
+# Só é versionado o que estiver explicitamente liberado nas exceções.
+docs/*
 aplicacoes/
+
+# Currículos soltos na raiz do repo, por segurança
+/*.pdf
+/*.tex
+/*.docx
+
+# ── Exceções: conteúdo do projeto, não dado pessoal ───────────────
+!docs/agents/
+
+# ── Artefatos de compilação do LaTeX ──────────────────────────────
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.fls
+*.fdb_latexmk
