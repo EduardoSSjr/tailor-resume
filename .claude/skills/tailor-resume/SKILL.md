@@ -1,6 +1,6 @@
 ---
 name: tailor-resume
-description: Adapta o currículo LaTeX de Eduardo Soldi Junior para uma vaga específica, em português ou inglês. Use sempre que o usuário colar o texto de uma descrição de vaga/job posting, mandar um link de uma vaga, ou anexar/apontar um arquivo (texto, markdown ou PDF) com a vaga, e quiser um currículo adaptado para ela — ou quando o usuário digitar /tailor-resume. Este é o modo rápido (só pergunta sobre lacunas em requisitos obrigatórios); para o modo completo, que pergunta sobre toda lacuna, veja a skill tailor-resume-full (só dispara por pedido explícito).
+description: Adapta o currículo LaTeX do usuário para uma vaga específica, em português ou inglês. Use sempre que o usuário colar o texto de uma descrição de vaga/job posting, mandar um link de uma vaga, ou anexar/apontar um arquivo (texto, markdown ou PDF) com a vaga, e quiser o currículo dele adaptado para ela — ou quando o usuário digitar /tailor-resume. Este é o modo rápido (só pergunta sobre lacunas em requisitos obrigatórios); para o modo completo, que pergunta sobre toda lacuna, veja a skill tailor-resume-full (só dispara por pedido explícito).
 ---
 
 # Tailor Resume
@@ -36,4 +36,4 @@ New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Ou
 cmd /c mklink /J "$env:USERPROFILE\.claude\skills\tailor-resume" "$env:USERPROFILE\projects\tailor-resume\.claude\skills\tailor-resume"
 ```
 
-Validado com smoke test: rodando `claude -p` a partir de uma pasta fora do projeto, tanto o gatilho automático (colar uma vaga) quanto o comando explícito `/tailor-resume` reconheceram a skill corretamente e geraram a saída nos caminhos absolutos certos do projeto (`aplicacoes/`, `meu-curriculo/EduardoSoldiCV.tex`), nunca relativos à pasta de onde a sessão foi aberta.
+Validado com smoke test: rodando `claude -p` a partir de uma pasta fora do projeto, tanto o gatilho automático (colar uma vaga) quanto o comando explícito `/tailor-resume` reconheceram a skill corretamente e geraram a saída nos caminhos absolutos certos do projeto (`aplicacoes/`, `meu-curriculo/<arquivoCurriculo>`), nunca relativos à pasta de onde a sessão foi aberta.

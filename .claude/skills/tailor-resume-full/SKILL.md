@@ -1,6 +1,6 @@
 ---
 name: tailor-resume-full
-description: Modo completo de adaptação do currículo LaTeX de Eduardo Soldi Junior para uma vaga específica — pergunta sobre toda lacuna da vaga (obrigatória ou desejável) não coberta no currículo-base, não só as obrigatórias. Use APENAS quando o usuário pedir explicitamente o modo completo/thorough (ex: "modo completo", "pergunta sobre tudo", "quero a versão completa"), ou quando o usuário digitar /tailor-resume-full. NÃO use só porque o usuário colou uma vaga — isso é o gatilho automático da skill tailor-resume (modo rápido), não desta.
+description: Modo completo de adaptação do currículo LaTeX do usuário para uma vaga específica — pergunta sobre toda lacuna da vaga (obrigatória ou desejável) não coberta no currículo-base, não só as obrigatórias. Use APENAS quando o usuário pedir explicitamente o modo completo/thorough (ex: "modo completo", "pergunta sobre tudo", "quero a versão completa"), ou quando o usuário digitar /tailor-resume-full. NÃO use só porque o usuário colou uma vaga — isso é o gatilho automático da skill tailor-resume (modo rápido), não desta.
 ---
 
 # Tailor Resume (modo completo)
