@@ -36,4 +36,4 @@ New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Ou
 cmd /c mklink /J "$env:USERPROFILE\.claude\skills\tailor-resume" "$env:USERPROFILE\projects\tailor-resume\.claude\skills\tailor-resume"
 ```
 
-Validado com smoke test: rodando `claude -p` a partir de uma pasta fora do projeto, tanto o gatilho automático (colar uma vaga) quanto o comando explícito `/tailor-resume` reconheceram a skill corretamente e geraram a saída nos caminhos absolutos certos do projeto (`aplicacoes/`, `docs/EduardoSoldiCV.tex`), nunca relativos à pasta de onde a sessão foi aberta.
+Validado com smoke test: rodando `claude -p` a partir de uma pasta fora do projeto, tanto o gatilho automático (colar uma vaga) quanto o comando explícito `/tailor-resume` reconheceram a skill corretamente e geraram a saída nos caminhos absolutos certos do projeto (`aplicacoes/`, `meu-curriculo/EduardoSoldiCV.tex`), nunca relativos à pasta de onde a sessão foi aberta.

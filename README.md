@@ -77,7 +77,7 @@ git clone https://github.com/EduardoSSjr/tailor-resume.git
 cd tailor-resume
 ```
 
-Coloque seu currículo em `docs/` (a pasta é ignorada pelo git — nada de dado pessoal é versionado).
+Coloque seu currículo em `meu-curriculo/` (a pasta é ignorada pelo git por inteiro — nada de dado pessoal é versionado, não importa o nome do arquivo). Um exemplo de currículo, com a estrutura e as macros que o processo espera, está em `template/curriculo-exemplo.tex`.
 
 Instale a skill globalmente, para que funcione em qualquer pasta que você abrir no Claude Code. No Windows, via junction (não exige privilégio de administrador, ao contrário do symlink):
 
@@ -112,6 +112,8 @@ Sendo honesto sobre o que ainda não funciona para todo mundo:
     PROCESS.md      # o motor: 13 passos, compartilhado pelos dois modos
   tailor-resume-full/
     SKILL.md        # modo completo: mesmo processo, limiar mais amplo
-docs/               # currículo-base e conhecimento acumulado (git-ignored)
+meu-curriculo/      # currículo-base e conhecimento acumulado (git-ignored)
+template/           # currículo de exemplo, para quem clona sem currículo ainda
+docs/agents/        # configuração de agente (mattpocock-skills)
 aplicacoes/         # uma pasta por vaga: .tex + .pdf + vaga.md (git-ignored)
 ```

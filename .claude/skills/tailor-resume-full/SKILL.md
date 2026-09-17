@@ -20,7 +20,7 @@ Siga **integralmente** o processo descrito em `C:\Users\edxlty\projects\tailor-r
 
 ## Limiar de lacunas (passo 5 do processo)
 
-**Pergunte sobre toda lacuna da vaga, obrigatória ou desejável**, desde que ainda não coberta pelo currículo-base nem por `docs/InformacoesAdicionais.md`. Não pergunte sobre um requisito que já está coberto por qualquer uma das duas fontes, mesmo que fraseado diferente na vaga.
+**Pergunte sobre toda lacuna da vaga, obrigatória ou desejável**, desde que ainda não coberta pelo currículo-base nem por `meu-curriculo/InformacoesAdicionais.md`. Não pergunte sobre um requisito que já está coberto por qualquer uma das duas fontes, mesmo que fraseado diferente na vaga.
 
 ## Instalação
 
