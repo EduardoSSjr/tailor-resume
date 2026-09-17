@@ -19,7 +19,7 @@ Esta é a skill que dispara **automaticamente** ao reconhecer uma vaga — é o 
 
 ## Processo
 
-Siga **integralmente** o processo descrito em `C:\Users\edxlty\projects\tailor-resume\.claude\skills\tailor-resume\PROCESS.md` — regra inegociável, limitações conhecidas, e os 13 passos. Não duplique esse conteúdo aqui.
+Siga **integralmente** o processo descrito em `PROCESS.md`, no mesmo diretório desta skill — regra inegociável, limitações conhecidas, e os 13 passos. Não duplique esse conteúdo aqui.
 
 ## Limiar de lacunas (passo 5 do processo)
 

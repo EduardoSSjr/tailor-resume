@@ -13,6 +13,10 @@ aplicacoes/
 /*.tex
 /*.docx
 
+# Config local (caminhos e preferências desta máquina) — versione só o
+# config.example.json, nunca o config.json real
+/config.json
+
 # ── Artefatos de compilação do LaTeX ──────────────────────────────
 *.aux
 *.log

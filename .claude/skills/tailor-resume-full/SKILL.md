@@ -16,7 +16,7 @@ Mesmo processo core da `tailor-resume`, mas com um limiar mais amplo de pergunta
 
 ## Processo
 
-Siga **integralmente** o processo descrito em `C:\Users\edxlty\projects\tailor-resume\.claude\skills\tailor-resume\PROCESS.md` — regra inegociável, limitações conhecidas, e os 13 passos. Não duplique esse conteúdo aqui.
+Siga **integralmente** o processo descrito em `../tailor-resume/PROCESS.md` (caminho relativo a esta pasta — o motor compartilhado vive na skill `tailor-resume`, não é duplicado aqui) — regra inegociável, limitações conhecidas, e os 13 passos. Não duplique esse conteúdo aqui.
 
 ## Limiar de lacunas (passo 5 do processo)
 

@@ -1,0 +1,6 @@
+{
+  "raizDoProjeto": "/caminho/absoluto/ate/aqui/tailor-resume",
+  "arquivoCurriculo": "nome-do-seu-arquivo.tex",
+  "maximoDePaginas": 1,
+  "caminhoPdflatex": ""
+}

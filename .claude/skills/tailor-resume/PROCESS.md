@@ -2,7 +2,18 @@
 
 Este documento descreve o processo completo usado pelas skills **tailor-resume** e **tailor-resume-full**. As duas seguem exatamente este processo; a única diferença entre elas é o **limiar** usado no passo 5 (quais lacunas geram pergunta), definido no `SKILL.md` de cada uma. Nunca duplique este processo dentro de um `SKILL.md` — sempre referencie este arquivo.
 
-Raiz do projeto: `C:\Users\edxlty\projects\tailor-resume` (caminho absoluto — este processo é pessoal e específico deste projeto, não precisa descobrir a raiz dinamicamente).
+## Configuração
+
+Antes de qualquer outro passo, leia `config.json` na raiz do repositório. É a única fonte de verdade sobre o ambiente local — nenhum passo abaixo usa caminho fixo. Campos:
+
+- `raizDoProjeto` (obrigatório): caminho absoluto da raiz deste repositório.
+- `arquivoCurriculo` (obrigatório): nome do arquivo de currículo dentro de `meu-curriculo/`, relativo a essa pasta (ex: `"curriculo.tex"`).
+- `maximoDePaginas` (obrigatório): inteiro — quantas páginas o currículo final pode ter. Usado no passo 10.
+- `caminhoPdflatex` (opcional): caminho do executável `pdflatex`. Vazio ou ausente significa "buscar no PATH" — ver passo 9.
+
+**Se `config.json` não existir, ou se `raizDoProjeto`, `arquivoCurriculo` ou `maximoDePaginas` estiverem ausentes ou inválidos**: pare imediatamente e informe ao usuário — algo como "Não encontrei um `config.json` válido na raiz do projeto. Rode o instalador do seu sistema operacional, ou crie o arquivo manualmente a partir de `config.example.json`." Nunca adivinhe a raiz do projeto nem o nome do arquivo de currículo — um caminho errado escrito silenciosamente é pior que uma execução que não começa.
+
+Nos passos abaixo, "a raiz do projeto" e "o currículo-base" se referem sempre aos valores lidos aqui.
 
 ## Regra inegociável
 
@@ -23,8 +34,8 @@ Também nunca use texto oculto, cor igual ao fundo, ou blocos soltos de palavras
    Em qualquer um dos três casos, o texto obtido alimenta o restante do processo abaixo exatamente da mesma forma — nenhuma lógica de reescrita muda por causa da origem da vaga.
 
 2. **Leia as fontes de verdade.**
-   - Leia `C:\Users\edxlty\projects\tailor-resume\meu-curriculo\EduardoSoldiCV.tex`, independente de qual seja o diretório de trabalho atual. Se esse caminho não existir mais, pare e avise o usuário em vez de adivinhar outro local (o projeto pode ter sido movido; este documento precisaria ser atualizado). Este arquivo é **somente leitura** — nunca escreva nele.
-   - Se existir, leia também `C:\Users\edxlty\projects\tailor-resume\meu-curriculo\InformacoesAdicionais.md` por inteiro. É opcional — pode não existir ainda (primeira vez que uma lacuna é persistida). Quando existir, seu conteúdo vale como fonte de verdade tão legítima quanto o currículo-base para fins da regra inegociável: um fato listado lá **não** é mais uma "lacuna" no passo 5, mesmo que não esteja no `.tex`. Isso não significa que todo fato listado ali deve entrar na reescrita desta vaga — a inclusão de cada fato segue o mesmo crivo de relevância de qualquer conteúdo editável do currículo-base; ver nota no passo 6.
+   - Leia `<raizDoProjeto>\meu-curriculo\<arquivoCurriculo>` (valores do `config.json`), independente de qual seja o diretório de trabalho atual. Se esse caminho não existir, pare e avise o usuário — o `config.json` pode estar apontando para um arquivo que não existe (nome errado, ou movido/renomeado). Este arquivo é **somente leitura** — nunca escreva nele.
+   - Se existir, leia também `<raizDoProjeto>\meu-curriculo\InformacoesAdicionais.md` por inteiro. É opcional — pode não existir ainda (primeira vez que uma lacuna é persistida). Quando existir, seu conteúdo vale como fonte de verdade tão legítima quanto o currículo-base para fins da regra inegociável: um fato listado lá **não** é mais uma "lacuna" no passo 5, mesmo que não esteja no `.tex`. Isso não significa que todo fato listado ali deve entrar na reescrita desta vaga — a inclusão de cada fato segue o mesmo crivo de relevância de qualquer conteúdo editável do currículo-base; ver nota no passo 6.
 
 3. **Extraia da vaga**: nome da empresa e o título do cargo. Serão usados no nome da pasta de saída. Normalize assim: minúsculas, sem acentos, remova qualquer caractere que não seja letra, número ou espaço (inclusive `&`, `/`, parênteses), depois troque espaços por hífen (ex: "Analista de T.I. (Sênior)" → `analista-de-ti-senior`).
 
@@ -69,17 +80,17 @@ O nome de um `\project{}` é um rótulo que o próprio Eduardo deu ao projeto (d
 
    Escreva o novo `.tex` em `curriculo.tex` dentro dessa pasta.
 
-9. **Compile o PDF**: rode `pdflatex -interaction=nonstopmode -output-directory=<pasta-da-aplicação> curriculo.tex` de dentro da pasta da aplicação. O executável costuma estar em `pdflatex` (se o PATH já tiver sido atualizado) ou em `C:\Users\edxlty\AppData\Local\Programs\MiKTeX\miktex\bin\x64\pdflatex.exe` (instalação padrão do MiKTeX nesta máquina) — tente o primeiro, caia para o segundo se não for encontrado.
+9. **Compile o PDF**: rode `pdflatex -interaction=nonstopmode -output-directory=<pasta-da-aplicação> curriculo.tex` de dentro da pasta da aplicação. Tente primeiro `pdflatex` direto (assumindo que está no PATH); se não for encontrado e `caminhoPdflatex` estiver preenchido no `config.json`, use esse caminho. Se não estiver no PATH e `caminhoPdflatex` também estiver vazio, pare e avise o usuário para preencher esse campo — não tente adivinhar uma instalação.
 
    Rode até 2 vezes se necessário para resolver referências. Se a compilação falhar, leia o `.log` gerado, corrija o `.tex` e recompile — no máximo **3 tentativas de correção** no total. Se ainda assim não compilar, pare, explique o erro ao usuário e não entregue um PDF quebrado.
 
-10. **Aplique a regra de 1 página.** Depois de compilar com sucesso, confira a contagem de páginas que o `pdflatex` imprime na forma `(N page, ...)` / `(N pages, ...)`, no stdout ou no `.log`. Extraia com um padrão como `grep -oE "\([0-9]+ pages?," curriculo.log` — não procure pela linha inteira `Output written on ...`, porque quando o caminho da pasta é longo essa linha pode quebrar no meio (o parêntese com a contagem de páginas, porém, sempre fica intacto).
+10. **Aplique a regra de páginas.** Depois de compilar com sucesso, confira a contagem de páginas que o `pdflatex` imprime na forma `(N page, ...)` / `(N pages, ...)`, no stdout ou no `.log`. Extraia com um padrão como `grep -oE "\([0-9]+ pages?," curriculo.log` — não procure pela linha inteira `Output written on ...`, porque quando o caminho da pasta é longo essa linha pode quebrar no meio (o parêntese com a contagem de páginas, porém, sempre fica intacto). Compare `N` contra `maximoDePaginas` (do `config.json`).
 
-    - Se **N = 1**, siga direto para a limpeza de arquivos auxiliares, abaixo.
-    - Se **N > 1**, corte o item editável menos relevante à vaga que ainda está no `.tex` — um bullet de `Perfil e Competências`, de Experiência ou de Projetos. **Nunca** corte conteúdo de seção fixa, e nunca remova um `\role{...}` ou `\project{...}` inteiro (a vaga/empresa/data em si é fixa; só os bullets dentro dele são editáveis). Recompile e confira a contagem de novo. Repita até caber.
+    - Se **N ≤ maximoDePaginas**, siga direto para a limpeza de arquivos auxiliares, abaixo.
+    - Se **N > maximoDePaginas**, corte o item editável menos relevante à vaga que ainda está no `.tex` — um bullet de `Perfil e Competências`, de Experiência ou de Projetos. **Nunca** corte conteúdo de seção fixa, e nunca remova um `\role{...}` ou `\project{...}` inteiro (a vaga/empresa/data em si é fixa; só os bullets dentro dele são editáveis). Recompile e confira a contagem de novo. Repita até caber.
     - Ordem de prioridade do corte (do primeiro a cortar para o último): (a) os últimos itens de `Perfil e Competências` — já ficaram no fim da lista por serem os menos relevantes à vaga, conforme o passo 6; (b) bullets de experiências mais antigas ou menos relacionadas à vaga; (c) bullets de Projetos menos alinhados à vaga.
-    - **Limite de cortes razoáveis** — pare de cortar automaticamente, mesmo que ainda esteja em mais de 1 página, assim que qualquer uma destas condições for atingida: (i) já foram feitas 5 rodadas de corte + recompilação; (ii) o próximo corte deixaria `Perfil e Competências` com menos de 4 itens; (iii) o próximo corte deixaria algum `\role` ou `\project` sem nenhum bullet. Ao atingir o limite sem caber em 1 página, **pare, avise o usuário explicitamente** (quantas páginas o PDF ficou e o que já foi cortado) e entregue os arquivos do jeito que estão — não continue cortando além do razoável.
-    - Um currículo que já compila em 1 página **não sofre nenhum corte**.
+    - **Limite de cortes razoáveis** — pare de cortar automaticamente, mesmo que ainda esteja acima de `maximoDePaginas`, assim que qualquer uma destas condições for atingida: (i) já foram feitas 5 rodadas de corte + recompilação; (ii) o próximo corte deixaria `Perfil e Competências` com menos de 4 itens; (iii) o próximo corte deixaria algum `\role` ou `\project` sem nenhum bullet. Ao atingir o limite sem caber no limite configurado, **pare, avise o usuário explicitamente** (quantas páginas o PDF ficou, qual era o limite configurado, e o que já foi cortado) e entregue os arquivos do jeito que estão — não continue cortando além do razoável.
+    - Um currículo que já compila dentro do limite configurado **não sofre nenhum corte**.
 
     Independentemente do resultado, depois de a contagem de páginas estar resolvida (coube em 1, ou os cortes razoáveis se esgotaram), apague os arquivos auxiliares que o `pdflatex` gerou na pasta da aplicação (`curriculo.aux`, `curriculo.log`, `curriculo.out`); só `curriculo.tex` e `curriculo.pdf` devem sobrar dessa etapa.
 
@@ -90,7 +101,7 @@ O nome de um `\project{}` é um rótulo que o próprio Eduardo deu ao projeto (d
 
 12. **Persista as respostas do passo 5, se houver.** Isso é independente da pasta da aplicação — é sobre atualizar a base de conhecimento pra runs futuros.
     - Se nenhuma pergunta foi feita no passo 5, pule este passo.
-    - Se houve confirmações e/ou recusas, **pergunte uma vez** (uma única pergunta de sim/não, pode agrupar todas as entradas pendentes) se o usuário quer persistir em `C:\Users\edxlty\projects\tailor-resume\meu-curriculo\InformacoesAdicionais.md`. Se sim: crie o arquivo se não existir (com um título e uma frase curta de contexto), e acrescente uma seção `## AAAA-MM-DD` (data de hoje; reaproveite uma seção já existente da mesma data se houver) com uma linha por entrada:
+    - Se houve confirmações e/ou recusas, **pergunte uma vez** (uma única pergunta de sim/não, pode agrupar todas as entradas pendentes) se o usuário quer persistir em `<raizDoProjeto>\meu-curriculo\InformacoesAdicionais.md`. Se sim: crie o arquivo se não existir (com um título e uma frase curta de contexto), e acrescente uma seção `## AAAA-MM-DD` (data de hoje; reaproveite uma seção já existente da mesma data se houver) com uma linha por entrada:
       - Confirmação: `- Confirmado: <habilidade/experiência> — <contexto real, breve, como o usuário descreveu>`
       - Recusa: `- Não tenho: <habilidade/experiência> (perguntado ao processar vaga de <empresa>)`
     - **Alias de projeto aprovado** (só no modo completo): não vai nas seções por data, porque não é histórico e sim tabela de consulta. Registre numa seção própria e fixa `## Aliases de projeto aprovados`, logo depois da introdução do arquivo, no formato `- "<nome no EduardoSoldiCV.tex>" → "<alias aprovado>"`. Antes de propor qualquer alias no passo 6, consulte essa seção: se a troca já estiver lá literalmente, aplique sem perguntar de novo.
