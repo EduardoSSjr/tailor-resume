@@ -1,18 +1,17 @@
 # ── Dados pessoais ────────────────────────────────────────────────
-# Regra: tudo em docs/ e aplicacoes/ é dado pessoal por padrão. Qualquer
+# Regra: tudo em meu-curriculo/ é dado pessoal por padrão. Qualquer
 # arquivo que você colocar aí é ignorado automaticamente, sem precisar
 # editar este arquivo — inclusive o seu currículo, com o nome que for.
-# Só é versionado o que estiver explicitamente liberado nas exceções.
-docs/*
+meu-curriculo/*
+!meu-curriculo/.gitkeep
+
+# Aplicações geradas por vaga (também dado pessoal)
 aplicacoes/
 
 # Currículos soltos na raiz do repo, por segurança
 /*.pdf
 /*.tex
 /*.docx
-
-# ── Exceções: conteúdo do projeto, não dado pessoal ───────────────
-!docs/agents/
 
 # ── Artefatos de compilação do LaTeX ──────────────────────────────
 *.aux

@@ -1,0 +1,109 @@
+\documentclass[9pt,a4paper]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage[margin=0.78cm, top=0.70cm, bottom=0.68cm]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{ragged2e}
+\usepackage{microtype}
+\input{glyphtounicode}
+\pdfgentounicode=1
+
+\definecolor{accent}{HTML}{2F4F6F}
+\definecolor{rulegray}{HTML}{CFD6DE}
+\definecolor{textgray}{HTML}{1F2933}
+\definecolor{muted}{HTML}{4B5563}
+
+\hypersetup{
+  colorlinks=true,
+  urlcolor=accent,
+  linkcolor=accent,
+  pdftitle={Curriculo - Nome Sobrenome},
+  pdfauthor={Nome Sobrenome},
+  pdfsubject={Curriculo de exemplo para o tailor-resume}
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\familydefault}{\sfdefault}
+\color{textgray}
+\linespread{0.93}
+
+\newcommand{\sectiontitle}[1]{%
+  \vspace{4.6pt}%
+  {\color{accent}\bfseries\normalsize\MakeUppercase{#1}}\par\vspace{1.6pt}%
+  {\color{rulegray}\hrule height 0.45pt}\vspace{2.7pt}%
+}
+
+\setlist[itemize]{leftmargin=10pt, label=\raisebox{0.25ex}{\scriptsize\textbullet}, topsep=1pt, itemsep=0pt, parsep=0pt, partopsep=0pt}
+
+\newcommand{\role}[3]{%
+  \vspace{1.4pt}%
+  \textbf{#1}\hfill {\color{muted}\small #3}\par
+  \textit{#2}\vspace{0pt}
+}
+\newcommand{\project}[1]{\vspace{1.2pt}\textbf{#1}\vspace{-1pt}}
+\newcommand{\contactsep}{\hspace{4pt}{\color{rulegray}|}\hspace{4pt}}
+
+\begin{document}
+\RaggedRight
+
+{\Large\bfseries Nome Sobrenome}\par\vspace{1.2pt}
+{\color{muted}Área de Atuação | Especialidades Principais}\par\vspace{2.3pt}
+{\color{muted}Cidade/UF}\par\vspace{0.5pt}
+{\small
+(00) 00000-0000 \contactsep
+\href{mailto:nome@exemplo.com}{nome@exemplo.com} \contactsep
+\href{https://www.linkedin.com/in/exemplo}{linkedin.com/in/exemplo}
+}
+
+
+\sectiontitle{Objetivo}
+Descreva aqui, em uma frase, a área e o tipo de atuação que você busca — este texto é editável pela skill a cada vaga.
+
+\sectiontitle{Perfil e Competências}
+\begin{itemize}
+  \item Competência ou área de experiência principal.
+  \item Segunda competência relevante, com ferramentas ou tecnologias específicas.
+  \item Terceira competência, complementar às anteriores.
+  \item Traço de perfil comportamental relevante para a área.
+\end{itemize}
+
+\sectiontitle{Experiência Profissional}
+\role{Cargo Atual}{Nome da Empresa}{Mês/Ano -- Atual}
+\begin{itemize}
+  \item Responsabilidade ou entrega relevante nesta posição.
+  \item Segunda responsabilidade, com resultado ou impacto mensurável quando possível.
+  \item Terceira responsabilidade ou atividade recorrente.
+\end{itemize}
+
+\role{Cargo Anterior}{Nome da Empresa Anterior}{Mês/Ano -- Mês/Ano}
+\begin{itemize}
+  \item Responsabilidade principal desta posição.
+  \item Segunda responsabilidade ou aprendizado relevante.
+\end{itemize}
+
+\sectiontitle{Projetos}
+\project{Nome do Projeto Pessoal ou Acadêmico}
+\begin{itemize}
+  \item O que foi construído e com quais ferramentas/tecnologias.
+  \item Resultado, aprendizado ou destaque do projeto.
+\end{itemize}
+
+\sectiontitle{Formação}
+\textbf{Nome do Curso ou Graduação}\hfill {\color{muted}\small Conclusão: Mês/Ano}\par
+Nome da Instituição -- Cidade/UF
+
+\sectiontitle{Cursos e Certificações}
+\begin{itemize}
+  \item Nome do curso ou certificação -- Instituição | Carga horária
+\end{itemize}
+
+\sectiontitle{Idiomas}
+Idioma -- Nível
+
+\end{document}
