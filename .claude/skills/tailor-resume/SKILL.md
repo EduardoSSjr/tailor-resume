@@ -1,6 +1,6 @@
 ---
 name: tailor-resume
-description: Adapta o currículo LaTeX do usuário para uma vaga específica, em português ou inglês. Use sempre que o usuário colar o texto de uma descrição de vaga/job posting, mandar um link de uma vaga, ou anexar/apontar um arquivo (texto, markdown ou PDF) com a vaga, e quiser o currículo dele adaptado para ela — ou quando o usuário digitar /tailor-resume. Este é o modo rápido (só pergunta sobre lacunas em requisitos obrigatórios); para o modo completo, que pergunta sobre toda lacuna, veja a skill tailor-resume-full (só dispara por pedido explícito).
+description: Adapta o currículo LaTeX do usuário para uma vaga específica, em português ou inglês. Use sempre que o usuário colar o texto de uma descrição de vaga/job posting, mandar um link de uma vaga, ou anexar/apontar um arquivo (texto, markdown ou PDF) com a vaga, e quiser um currículo adaptado para ela — ou quando o usuário digitar /tailor-resume. Este é o modo rápido (só pergunta sobre lacunas em requisitos obrigatórios); para o modo completo, que pergunta sobre toda lacuna, veja a skill tailor-resume-full (só dispara por pedido explícito).
 ---
 
 # Tailor Resume
