@@ -42,9 +42,19 @@ if (-not (Test-Path $caminhoCurriculo)) {
 }
 
 # --- Máximo de páginas ---
+function Read-Inteiro {
+    param([string]$Prompt, [int]$Default)
+    while ($true) {
+        $resposta = Read-Host "$Prompt [$Default]"
+        if ([string]::IsNullOrWhiteSpace($resposta)) { return $Default }
+        $valor = 0
+        if ([int]::TryParse($resposta, [ref]$valor) -and $valor -gt 0) { return $valor }
+        Write-Warning "'$resposta' não é um número inteiro maior que zero -- tente de novo."
+    }
+}
+
 $defaultPaginas = if ($existente -and $existente.maximoDePaginas) { $existente.maximoDePaginas } else { 1 }
-$resposta = Read-Host "Máximo de páginas do currículo final [$defaultPaginas]"
-$maximoDePaginas = if ([string]::IsNullOrWhiteSpace($resposta)) { [int]$defaultPaginas } else { [int]$resposta }
+$maximoDePaginas = Read-Inteiro -Prompt 'Máximo de páginas do currículo final' -Default $defaultPaginas
 
 # --- pdflatex: PATH primeiro, pergunta só se não achar ---
 $caminhoPdflatex = ''
@@ -104,8 +114,21 @@ function Install-SkillJunction {
     Write-Host "Junction criada: $destino -> $origem" -ForegroundColor Green
 }
 
-Install-SkillJunction -Nome 'tailor-resume'
-Install-SkillJunction -Nome 'tailor-resume-full'
+$erros = @()
+foreach ($nome in @('tailor-resume', 'tailor-resume-full')) {
+    try {
+        Install-SkillJunction -Nome $nome
+    } catch {
+        $erros += "'$nome': $($_.Exception.Message)"
+        Write-Warning "Falha ao instalar a junction de '$nome': $($_.Exception.Message)"
+    }
+}
 
 Write-Host ''
+if ($erros.Count -gt 0) {
+    Write-Host 'Instalação concluída com pendências -- o config.json foi escrito, mas nem toda skill foi linkada:' -ForegroundColor Red
+    $erros | ForEach-Object { Write-Host "  - $_" -ForegroundColor Red }
+    Write-Host 'Resolva o que está listado acima e rode o instalador de novo -- ele não duplica o que já deu certo.' -ForegroundColor Red
+    exit 1
+}
 Write-Host 'Instalação concluída. Abra o Claude Code em qualquer pasta e cole uma vaga para testar.' -ForegroundColor Cyan
