@@ -35,7 +35,7 @@ Quando a vaga pede algo que **não** está no currículo, a skill não inventa e
 2. Lê o currículo-base e a base de conhecimento acumulada
 3. Detecta lacunas entre os requisitos da vaga e o que você tem, e pergunta sobre elas
 4. Reescreve as seções editáveis priorizando o que a vaga pede
-5. **Traduz para inglês** automaticamente, se a vaga estiver em inglês
+5. **Traduz automaticamente entre português, inglês e espanhol**, se a vaga estiver num idioma diferente do currículo-base (fora desses três, avisa em vez de traduzir)
 6. Compila o PDF e aplica a **regra de 1 página**, cortando os itens menos relevantes e recompilando até caber
 7. Arquiva `curriculo.tex`, `curriculo.pdf` e `vaga.md` numa pasta por aplicação
 8. Explica em 2–4 linhas o que priorizou e por quê

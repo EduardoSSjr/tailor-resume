@@ -39,10 +39,21 @@ Também nunca use texto oculto, cor igual ao fundo, ou blocos soltos de palavras
 
 3. **Extraia da vaga**: nome da empresa e o título do cargo. Serão usados no nome da pasta de saída. Normalize assim: minúsculas, sem acentos, remova qualquer caractere que não seja letra, número ou espaço (inclusive `&`, `/`, parênteses), depois troque espaços por hífen (ex: "Analista de T.I. (Sênior)" → `analista-de-ti-senior`).
 
-4. **Identifique o que é editável e o que é fixo** no currículo-base:
-   - **Editável** (pode reescrever texto e reordenar itens, usando só fatos já presentes nas fontes de verdade): `Objetivo`; os itens da lista em `Perfil e Competências`; os bullets dentro de cada `\role{...}` (Experiência Profissional); os bullets dentro de cada `\project{...}` (Projetos).
-   - **Fixo** (conteúdo nunca muda — no máximo a ordem dos blocos pode mudar, nunca o texto): cabeçalho de contato; os argumentos de `\role{cargo}{empresa}{datas}`; `Formação`; `Cursos e Certificações`; `Idiomas`; e todo o preâmbulo do `.tex`, incluindo os metadados do `\hypersetup` (`pdftitle`, `pdfsubject`, `pdfkeywords`).
-   - **Fixo com exceção registrada**: o nome em `\project{nome}` — ver a seção "Nome de projeto" abaixo.
+4. **Identifique o que é editável e o que é fixo** no currículo-base **pela posição estrutural dos blocos, nunca pelo texto do título da seção.** O `.tex` do usuário pode ter os títulos em português, inglês ou espanhol (ver passo 7) — comparar contra uma string fixa como `"Perfil e Competências"` quebraria silenciosamente para currículo-base em outro idioma.
+
+   O contrato de template (`template/curriculo-exemplo.tex`) define exatamente 7 blocos `\sectiontitle{...}`, sempre nesta ordem, independente do idioma do texto dentro das chaves:
+
+   1. Objetivo — texto **editável**.
+   2. Perfil e Competências — itens de lista **editáveis**.
+   3. Experiência Profissional — bullets dentro de cada `\role{...}` são **editáveis**; os três argumentos de `\role{cargo}{empresa}{datas}` são **fixos**.
+   4. Projetos — bullets dentro de cada `\project{...}` são **editáveis**; o nome do projeto é **fixo com exceção registrada** (ver seção "Nome de projeto" abaixo).
+   5. Formação — **fixo**.
+   6. Cursos e Certificações — **fixo**.
+   7. Idiomas — **fixo**.
+
+   Identifique cada bloco pela **ordem de aparição** (1º `\sectiontitle` = Objetivo, 2º = Perfil e Competências, e assim por diante) e pelas macros que ele contém (`\role{}`, `\project{}`) — nunca pelo texto do título. Também **fixo**, fora dos `\sectiontitle`: o cabeçalho de contato (antes do primeiro `\sectiontitle`) e todo o preâmbulo do `.tex`, incluindo os metadados do `\hypersetup` (`pdftitle`, `pdfsubject`, `pdfkeywords`).
+
+   Se o currículo-base não tiver exatamente esses 7 blocos nesta ordem, pare e avise o usuário — o contrato de template não foi seguido, e adivinhar o mapeamento é mais arriscado que parar.
 
    **Nunca reescreva `pdfsubject`/`pdfkeywords` para refletir a vaga.** É texto invisível para quem lê o currículo e visível para parsers de ATS — ou seja, exatamente o keyword stuffing proibido pela regra inegociável, ainda que os termos sejam verdadeiros. A única alteração permitida no preâmbulo é a troca do `babel`, no passo 7.
 
@@ -70,10 +81,33 @@ O nome de um `\project{}` é um rótulo que o próprio usuário deu ao projeto (
    - **Relevância dos fatos de `InformacoesAdicionais.md`**: um fato registrado ali — seja confirmado nesta execução no passo 5, seja herdado de uma execução anterior — só entra na reescrita se fizer sentido pra vaga atual. Não é pra aparecer em toda vaga só porque está registrado no arquivo: avalie a relevância a cada execução, exatamente como faria com qualquer bullet do `.tex` base (ex: uma certificação em oratória só vale a pena mencionar quando a vaga toca em apresentações, atendimento a cliente ou comunicação com stakeholders — numa vaga que não menciona nada disso, omita mesmo estando disponível). O fato continua contando como fonte de verdade legítima (não é lacuna, não gera pergunta de novo) mesmo nas vagas onde é omitido — a omissão aqui é só sobre relevância, igual à do item abaixo.
    - Você pode omitir itens editáveis pouco relevantes à vaga, mas não pode adicionar itens novos além do que as fontes de verdade (incluindo o passo 5) sustentam. (Isso é só sobre relevância — o controle de contagem de páginas em si é automático e acontece no passo 10.)
 
-7. **Traduza para inglês, se a vaga estiver em inglês.** Detecte o idioma predominante do texto obtido no passo 1. Se for português, pule este passo — nada muda. Se for inglês:
-   - Traduza todo o conteúdo do currículo já reescrito no passo 6: os títulos das seções (`Objetivo` → `Objective`, `Perfil e Competências` → `Skills \& Profile`, `Experiência Profissional` → `Professional Experience`, `Projetos` → `Projects`, `Formação` → `Education`, `Cursos e Certificações` → `Courses \& Certifications`, `Idiomas` → `Languages`), o texto do Objetivo, os bullets de Perfil/Experiência/Projetos, os títulos de cargo e de formação (ex: "Suporte Técnico N1" → "IT Support Technician (Tier 1)", "Tecnólogo em Análise e Desenvolvimento de Sistemas" → "Associate Degree in Systems Analysis and Development"), as datas (ex: "Janeiro/2026 -- Atual" → "January 2026 -- Present"), e o item de idioma ("Inglês intermediário" → "Intermediate English").
+7. **Traduza entre português, inglês e espanhol, se necessário.** São os três únicos idiomas suportados, tanto para o currículo-base quanto para a vaga.
+
+   - **Idioma do currículo-base**: leia a opção do pacote `babel` no preâmbulo do `.tex` (`\usepackage[X]{babel}`) — `brazil` = português, `english` = inglês, `spanish` = espanhol. Se a opção não for nenhuma dessas três, pare e avise o usuário: o contrato de idioma do template não foi seguido, e adivinhar é mais arriscado que parar.
+   - **Idioma da vaga**: detecte o idioma predominante do texto obtido no passo 1.
+
+   Com os dois idiomas identificados:
+
+   - **Vaga no mesmo idioma do currículo-base** (ex: os dois em português): pule a tradução — nada muda. É o caso original do processo, comportamento inalterado.
+   - **Vaga em um dos outros dois idiomas suportados**: traduza todo o conteúdo do currículo já reescrito no passo 6, do idioma do currículo-base para o idioma da vaga.
+   - **Vaga em qualquer outro idioma** (não é nenhum dos três suportados): **não traduza**. Siga com o currículo-base no seu próprio idioma, e inclua no resumo do passo 13 um aviso explícito de que aquele idioma não é suportado — não é opcional, e nunca traduza "no chute" para um idioma fora dos três.
+
+   Quando a tradução ocorrer:
+   - Traduza os títulos das seções identificadas por posição no passo 4, mantendo o sentido de cada bloco. Referência ilustrativa (não uma tabela fixa a decorar — a direção real depende de qual dos três é origem e qual é destino):
+
+     | Bloco | Português | English | Español |
+     |---|---|---|---|
+     | Objetivo | Objetivo | Objective | Objetivo |
+     | Perfil e Competências | Perfil e Competências | Skills \& Profile | Habilidades y Perfil |
+     | Experiência Profissional | Experiência Profissional | Professional Experience | Experiencia Profesional |
+     | Projetos | Projetos | Projects | Proyectos |
+     | Formação | Formação | Education | Formación |
+     | Cursos e Certificações | Cursos e Certificações | Courses \& Certifications | Cursos y Certificaciones |
+     | Idiomas | Idiomas | Languages | Idiomas |
+
+   - Traduza também o texto do Objetivo, os bullets de Perfil/Experiência/Projetos, os títulos de cargo e de formação (ex: "Assistente Administrativo" → "Administrative Assistant" → "Asistente Administrativo"), as datas (ex: "Janeiro/2026 -- Atual" → "January 2026 -- Present" → "Enero 2026 -- Actualidad"), e o item de idioma (ex: "Inglês intermediário" → "Intermediate English" → "Inglés intermedio").
    - **Nunca traduza nomes próprios**: nome da pessoa, nomes de empresas/instituições, nomes de cidade/estado.
-   - Troque `\usepackage[brazil]{babel}` por `\usepackage[english]{babel}` no preâmbulo do `.tex`, para hifenização e tipografia corretas em inglês.
+   - Troque a opção do `babel` no preâmbulo para o idioma de destino (`brazil`, `english` ou `spanish`), para hifenização e tipografia corretas.
    - A tradução é reescrita **literal e fiel**, não uma nova oportunidade de reescrever por relevância — a regra inegociável continua valendo integralmente: nenhum fato, habilidade ou responsabilidade novo, nada que não exista (já traduzido) nas fontes de verdade.
 
 8. **Defina a pasta da aplicação**: `aplicacoes/<empresa>-<cargo>-<AAAA-MM>/` (mês/ano atual), a partir da raiz do projeto do passo 2. Se essa pasta já existir (segunda aplicação para a mesma empresa/cargo no mesmo mês), acrescente um sufixo numérico: `-2`, `-3`, etc., até chegar num nome que não existe ainda. Nunca sobrescreva uma aplicação anterior.
@@ -94,7 +128,7 @@ O nome de um `\project{}` é um rótulo que o próprio usuário deu ao projeto (
 
     Independentemente do resultado, depois de a contagem de páginas estar resolvida (coube em 1, ou os cortes razoáveis se esgotaram), apague os arquivos auxiliares que o `pdflatex` gerou na pasta da aplicação (`curriculo.aux`, `curriculo.log`, `curriculo.out`); só `curriculo.tex` e `curriculo.pdf` devem sobrar dessa etapa.
 
-11. **Salve a vaga original** em `vaga.md`, dentro da mesma pasta da aplicação — **sempre no idioma original da vaga, nunca traduzido**, mesmo quando o passo 7 traduziu o currículo para inglês:
+11. **Salve a vaga original** em `vaga.md`, dentro da mesma pasta da aplicação — **sempre no idioma original da vaga, nunca traduzido**, mesmo quando o passo 7 traduziu o currículo:
     - Se a vaga veio como **texto colado**, salve o texto exatamente como o usuário colou.
     - Se veio por **link**, salve o texto extraído pelo WebFetch, com a URL de origem na primeira linha (ex: `Fonte: https://...`).
     - Se veio por **arquivo**, salve o texto extraído, com o caminho ou nome do arquivo original na primeira linha (ex: `Fonte: vaga-tech4ai.pdf`).
@@ -107,4 +141,4 @@ O nome de um `\project{}` é um rótulo que o próprio usuário deu ao projeto (
     - **Alias de projeto aprovado** (só no modo completo): não vai nas seções por data, porque não é histórico e sim tabela de consulta. Registre numa seção própria e fixa `## Aliases de projeto aprovados`, logo depois da introdução do arquivo, no formato `- "<nome no arquivo de currículo>" → "<alias aprovado>"`. Antes de propor qualquer alias no passo 6, consulte essa seção: se a troca já estiver lá literalmente, aplique sem perguntar de novo.
     - Se o usuário recusar a persistência, não escreva nada — a resposta já foi usada na aplicação atual (passo 6) e é isso que vale para esta execução.
 
-13. **Entregue um resumo curto** (2 a 4 linhas) do que foi priorizado/reescrito — por exemplo, quais competências foram colocadas em destaque e por quê. Se a vaga estava em inglês, mencione que o currículo foi traduzido. Se alguma pergunta de lacuna foi feita no passo 5, mencione o que foi perguntado e se foi persistido no passo 12. Se algum corte automático do passo 10 foi aplicado, mencione o que foi cortado. Se o limite de cortes foi atingido sem caber no limite de páginas configurado, esse é o aviso explícito ao usuário — não é opcional. Não peça aprovação antes de finalizar; os arquivos já estão salvos quando você reporta o resumo.
+13. **Entregue um resumo curto** (2 a 4 linhas) do que foi priorizado/reescrito — por exemplo, quais competências foram colocadas em destaque e por quê. Se o passo 7 traduziu o currículo, mencione para qual idioma. Se a vaga estava em um idioma fora dos três suportados (passo 7), esse é o aviso explícito ao usuário — não é opcional. Se alguma pergunta de lacuna foi feita no passo 5, mencione o que foi perguntado e se foi persistido no passo 12. Se algum corte automático do passo 10 foi aplicado, mencione o que foi cortado. Se o limite de cortes foi atingido sem caber no limite de páginas configurado, esse também é um aviso explícito ao usuário — não é opcional. Não peça aprovação antes de finalizar; os arquivos já estão salvos quando você reporta o resumo.
