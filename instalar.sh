@@ -17,27 +17,39 @@ echo
 
 # --- Leitura mínima do config.json existente (schema plano e conhecido,
 #     não precisamos de um parser de JSON de verdade nem de depender de
-#     jq/python estarem instalados) ---
+#     jq/python estarem instalados). Não desfaz \\ escapado -- se algum dia
+#     ler um config.json escrito pelo instalar.ps1 (ConvertTo-Json escapa
+#     barras invertidas), um caminho Windows viria com \\ duplicado. Baixo
+#     impacto: cada SO gera e usa o próprio config.json. ---
 json_get_string() {
     grep -o "\"$1\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" "$2" 2>/dev/null \
         | sed -E 's/.*:[[:space:]]*"([^"]*)"/\1/' | head -n1
 }
 json_get_number() {
-    grep -o "\"$1\"[[:space:]]*:[[:space:]]*[0-9]\+" "$2" 2>/dev/null \
+    grep -o "\"$1\"[[:space:]]*:[[:space:]]*[0-9][0-9]*" "$2" 2>/dev/null \
         | sed -E 's/.*:[[:space:]]*([0-9]+)/\1/' | head -n1
+}
+# Escapa \\ e " antes de gravar uma string no JSON -- sem isso, um caminho
+# ou nome de arquivo com aspas quebraria o config.json gerado.
+json_escape() {
+    printf '%s' "$1" | sed -e 's/\\/\\\\/g' -e 's/"/\\"/g'
 }
 
 DEFAULT_ARQUIVO=""
 DEFAULT_PAGINAS="1"
 DEFAULT_CAMINHO=""
 if [ -f "$CONFIG_PATH" ]; then
-    echo "config.json existente encontrado -- valores atuais viram sugestão, aperte Enter pra manter."
-    valor="$(json_get_string arquivoCurriculo "$CONFIG_PATH")"
-    [ -n "$valor" ] && DEFAULT_ARQUIVO="$valor"
-    valor="$(json_get_number maximoDePaginas "$CONFIG_PATH")"
-    [ -n "$valor" ] && DEFAULT_PAGINAS="$valor"
-    valor="$(json_get_string caminhoPdflatex "$CONFIG_PATH")"
-    [ -n "$valor" ] && DEFAULT_CAMINHO="$valor"
+    if grep -q '"raizDoProjeto"' "$CONFIG_PATH" 2>/dev/null; then
+        echo "config.json existente encontrado -- valores atuais viram sugestão, aperte Enter pra manter."
+        valor="$(json_get_string arquivoCurriculo "$CONFIG_PATH")"
+        [ -n "$valor" ] && DEFAULT_ARQUIVO="$valor"
+        valor="$(json_get_number maximoDePaginas "$CONFIG_PATH")"
+        [ -n "$valor" ] && DEFAULT_PAGINAS="$valor"
+        valor="$(json_get_string caminhoPdflatex "$CONFIG_PATH")"
+        [ -n "$valor" ] && DEFAULT_CAMINHO="$valor"
+    else
+        echo "Aviso: config.json existente não pôde ser lido (JSON inválido) -- ignorando e pedindo os valores de novo." >&2
+    fi
 fi
 
 # --- Nome do arquivo de currículo ---
@@ -79,10 +91,10 @@ fi
 # --- Escreve config.json ---
 cat > "$CONFIG_PATH" <<EOF
 {
-  "raizDoProjeto": "$RAIZ_DO_PROJETO",
-  "arquivoCurriculo": "$ARQUIVO_CURRICULO",
+  "raizDoProjeto": "$(json_escape "$RAIZ_DO_PROJETO")",
+  "arquivoCurriculo": "$(json_escape "$ARQUIVO_CURRICULO")",
   "maximoDePaginas": $MAXIMO_DE_PAGINAS,
-  "caminhoPdflatex": "$CAMINHO_PDFLATEX"
+  "caminhoPdflatex": "$(json_escape "$CAMINHO_PDFLATEX")"
 }
 EOF
 echo
@@ -90,10 +102,11 @@ echo "config.json escrito em $CONFIG_PATH"
 
 # --- Links simbólicos globais das duas skills ---
 instalar_skill_symlink() {
-    nome="$1"
-    origem="$RAIZ_DO_PROJETO/.claude/skills/$nome"
-    skills_globais="$HOME/.claude/skills"
-    destino="$skills_globais/$nome"
+    local nome="$1"
+    local origem="$RAIZ_DO_PROJETO/.claude/skills/$nome"
+    local skills_globais="$HOME/.claude/skills"
+    local destino="$skills_globais/$nome"
+    local alvo_atual
 
     if [ ! -d "$origem" ]; then
         ULTIMO_ERRO="pasta da skill não encontrada: $origem"
@@ -114,7 +127,10 @@ instalar_skill_symlink() {
         return 1
     fi
 
-    ln -s "$origem" "$destino"
+    if ! ln -s "$origem" "$destino"; then
+        ULTIMO_ERRO="'ln -s' falhou ao criar o link em $destino"
+        return 1
+    fi
     echo "Link criado: $destino -> $origem"
 }
 
