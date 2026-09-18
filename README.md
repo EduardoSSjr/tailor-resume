@@ -79,7 +79,13 @@ cd tailor-resume
 
 Coloque seu currículo em `meu-curriculo/` (a pasta é ignorada pelo git por inteiro — nada de dado pessoal é versionado, não importa o nome do arquivo). Um exemplo de currículo, com a estrutura e as macros que o processo espera, está em `template/curriculo-exemplo.tex`.
 
-Instale a skill globalmente, para que funcione em qualquer pasta que você abrir no Claude Code. No Windows, via junction (não exige privilégio de administrador, ao contrário do symlink):
+No Windows, rode o instalador — ele pergunta o nome do seu arquivo de currículo e o limite de páginas, detecta o `pdflatex` sozinho se estiver no PATH (só pergunta o caminho se não achar), escreve o `config.json` e cria as junctions globais das duas skills. Pode rodar de novo a qualquer momento para atualizar essas respostas, sem duplicar nada:
+
+```powershell
+.\instalar.ps1
+```
+
+Se preferir fazer manualmente (ou estiver em Unix, onde o instalador ainda não existe — ver limitações abaixo), o instalador não faz nada além de: escrever um `config.json` a partir do `config.example.json`, e criar a junction global de cada skill (não exige privilégio de administrador, ao contrário do symlink):
 
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Out-Null
@@ -97,9 +103,8 @@ Abra o Claude Code em qualquer pasta e cole a descrição de uma vaga. A skill d
 
 Sendo honesto sobre o que ainda não funciona para todo mundo:
 
-- **Caminhos absolutos.** O `PROCESS.md` e os `SKILL.md` ainda apontam para caminhos de uma máquina específica. Clonar hoje exige editá-los à mão. Tornar isso portátil é o próximo trabalho planejado.
 - **Só currículo em LaTeX**, e com as macros específicas deste projeto (`\role{}`, `\project{}`, `\sectiontitle{}`). Aceitar currículo em PDF é a evolução seguinte, e é o que destrava o uso por quem não escreve LaTeX.
-- **Windows.** A instalação documentada usa junction NTFS; em Unix o equivalente é `ln -s`, ainda não documentado passo a passo.
+- **Instalador só no Windows** (`instalar.ps1`). Em Unix, a instalação ainda é manual: escrever o `config.json` à mão a partir do `config.example.json` e criar a junction como `ln -s`. Um `instalar.sh` equivalente é o próximo trabalho planejado.
 - **Links de vaga em plataformas de ATS** (Gupy, InHire, LinkedIn e afins) costumam bloquear requisição automatizada e retornar 403. Não é bug da skill, é bloqueio anti-bot — nesse caso, cole o texto ou salve a página como PDF e aponte o arquivo.
 - **A regra inegociável é hoje uma instrução, não uma verificação.** Não existe ainda uma checagem automática de que nenhum fato foi inventado — é a issue [#5](../../issues/5), ainda aberta.
 
@@ -116,4 +121,6 @@ meu-curriculo/      # currículo-base e conhecimento acumulado (git-ignored)
 template/           # currículo de exemplo, para quem clona sem currículo ainda
 docs/agents/        # configuração de agente (mattpocock-skills)
 aplicacoes/         # uma pasta por vaga: .tex + .pdf + vaga.md (git-ignored)
+instalar.ps1        # instalador Windows: config.json + junctions das skills
+config.example.json # modelo do config.json (o real é git-ignored)
 ```
