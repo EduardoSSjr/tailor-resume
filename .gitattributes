@@ -1,0 +1,3 @@
+# Scripts Unix precisam de LF sempre, independente do core.autocrlf de
+# quem commitar -- CRLF quebra o shebang e a execução em Linux/macOS.
+*.sh text eol=lf

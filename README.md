@@ -79,21 +79,35 @@ cd tailor-resume
 
 Coloque seu currículo em `meu-curriculo/` (a pasta é ignorada pelo git por inteiro — nada de dado pessoal é versionado, não importa o nome do arquivo). Um exemplo de currículo, com a estrutura e as macros que o processo espera, está em `template/curriculo-exemplo.tex`.
 
-No Windows, rode o instalador — ele pergunta o nome do seu arquivo de currículo e o limite de páginas, detecta o `pdflatex` sozinho se estiver no PATH (só pergunta o caminho se não achar), escreve o `config.json` e cria as junctions globais das duas skills. Pode rodar de novo a qualquer momento para atualizar essas respostas, sem duplicar nada:
+Rode o instalador do seu sistema — ele pergunta o nome do seu arquivo de currículo e o limite de páginas (reaproveitando um `config.json` existente como sugestão, se você rodar de novo), detecta o `pdflatex` sozinho se estiver no PATH (só pergunta o caminho se não achar), escreve o `config.json` e cria o link global de cada skill (junction no Windows, symlink no Linux/macOS). Pode rodar de novo a qualquer momento para atualizar essas respostas, sem duplicar nada:
 
 ```powershell
+# Windows
 .\instalar.ps1
 ```
 
-Se preferir fazer manualmente (ou estiver em Unix, onde o instalador ainda não existe — ver limitações abaixo), o instalador não faz nada além de: escrever um `config.json` a partir do `config.example.json`, e criar a junction global de cada skill (não exige privilégio de administrador, ao contrário do symlink):
+```bash
+# Linux/macOS
+./instalar.sh
+```
+
+Se preferir fazer manualmente, o instalador não faz nada além de: escrever um `config.json` a partir do `config.example.json`, e criar o link global de cada skill:
 
 ```powershell
+# Windows -- junction, não exige privilégio de administrador (ao contrário do symlink)
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Out-Null
 cmd /c mklink /J "$env:USERPROFILE\.claude\skills\tailor-resume" "<caminho-do-repo>\.claude\skills\tailor-resume"
 cmd /c mklink /J "$env:USERPROFILE\.claude\skills\tailor-resume-full" "<caminho-do-repo>\.claude\skills\tailor-resume-full"
 ```
 
-A junction mantém o repositório como fonte única de verdade: editar o arquivo aqui já vale globalmente, sem reinstalar nem sincronizar cópias.
+```bash
+# Linux/macOS -- symlink
+mkdir -p ~/.claude/skills
+ln -s "<caminho-do-repo>/.claude/skills/tailor-resume" ~/.claude/skills/tailor-resume
+ln -s "<caminho-do-repo>/.claude/skills/tailor-resume-full" ~/.claude/skills/tailor-resume-full
+```
+
+O link mantém o repositório como fonte única de verdade: editar o arquivo aqui já vale globalmente, sem reinstalar nem sincronizar cópias.
 
 ### Uso
 
@@ -104,7 +118,7 @@ Abra o Claude Code em qualquer pasta e cole a descrição de uma vaga. A skill d
 Sendo honesto sobre o que ainda não funciona para todo mundo:
 
 - **Só currículo em LaTeX**, e com as macros específicas deste projeto (`\role{}`, `\project{}`, `\sectiontitle{}`). Aceitar currículo em PDF é a evolução seguinte, e é o que destrava o uso por quem não escreve LaTeX.
-- **Instalador só no Windows** (`instalar.ps1`). Em Unix, a instalação ainda é manual: escrever o `config.json` à mão a partir do `config.example.json` e criar a junction como `ln -s`. Um `instalar.sh` equivalente é o próximo trabalho planejado.
+- **`instalar.sh` não foi testado num Linux ou macOS de verdade** — só a lógica de perguntas/`config.json` (que não depende de sistema operacional) e, indiretamente, a detecção de link já existente. A criação do symlink em si (`ln -s`) segue o idioma POSIX padrão para esse tipo de instalador, mas não há ainda uma confirmação de ponta a ponta rodando fora de uma máquina Windows.
 - **Links de vaga em plataformas de ATS** (Gupy, InHire, LinkedIn e afins) costumam bloquear requisição automatizada e retornar 403. Não é bug da skill, é bloqueio anti-bot — nesse caso, cole o texto ou salve a página como PDF e aponte o arquivo.
 - **A regra inegociável é hoje uma instrução, não uma verificação.** Não existe ainda uma checagem automática de que nenhum fato foi inventado — é a issue [#5](../../issues/5), ainda aberta.
 
@@ -122,5 +136,6 @@ template/           # currículo de exemplo, para quem clona sem currículo aind
 docs/agents/        # configuração de agente (mattpocock-skills)
 aplicacoes/         # uma pasta por vaga: .tex + .pdf + vaga.md (git-ignored)
 instalar.ps1        # instalador Windows: config.json + junctions das skills
+instalar.sh         # instalador Linux/macOS: config.json + symlinks das skills
 config.example.json # modelo do config.json (o real é git-ignored)
 ```
