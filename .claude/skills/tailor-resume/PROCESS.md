@@ -53,6 +53,8 @@ Também nunca use texto oculto, cor igual ao fundo, ou blocos soltos de palavras
 
    Identifique cada bloco pela **ordem de aparição** (1º `\sectiontitle` = Objetivo, 2º = Perfil e Competências, e assim por diante) e pelas macros que ele contém (`\role{}`, `\project{}`) — nunca pelo texto do título. Também **fixo**, fora dos `\sectiontitle`: o cabeçalho de contato (antes do primeiro `\sectiontitle`) e todo o preâmbulo do `.tex`, incluindo os metadados do `\hypersetup` (`pdftitle`, `pdfsubject`, `pdfkeywords`).
 
+   **Convenção usada no resto deste documento**: daqui em diante, os nomes acima (`Objetivo`, `Perfil e Competências`, `Experiência Profissional`, `Projetos`, `Formação`, `Cursos e Certificações`, `Idiomas`) funcionam só como **rótulos fixos de referência** para as 7 posições — nunca como texto a procurar ou comparar contra o `.tex` do usuário. Quando um passo mais adiante disser, por exemplo, "corte um item de `Perfil e Competências`", leia como "corte um item do bloco 2 identificado neste passo", qualquer que seja o idioma do título real no `.tex`.
+
    Se o currículo-base não tiver exatamente esses 7 blocos nesta ordem, pare e avise o usuário — o contrato de template não foi seguido, e adivinhar o mapeamento é mais arriscado que parar.
 
    **Nunca reescreva `pdfsubject`/`pdfkeywords` para refletir a vaga.** É texto invisível para quem lê o currículo e visível para parsers de ATS — ou seja, exatamente o keyword stuffing proibido pela regra inegociável, ainda que os termos sejam verdadeiros. A única alteração permitida no preâmbulo é a troca do `babel`, no passo 7.
