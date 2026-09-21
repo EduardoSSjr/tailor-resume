@@ -118,7 +118,7 @@ Abra o Claude Code em qualquer pasta e cole a descrição de uma vaga. A skill d
 Sendo honesto sobre o que ainda não funciona para todo mundo:
 
 - **Só currículo em LaTeX**, e com as macros específicas deste projeto (`\role{}`, `\project{}`, `\sectiontitle{}`). Aceitar currículo em PDF é a evolução seguinte, e é o que destrava o uso por quem não escreve LaTeX.
-- **`instalar.sh` não foi testado num Linux ou macOS de verdade** — só a lógica de perguntas/`config.json` (que não depende de sistema operacional) e, indiretamente, a detecção de link já existente. A criação do symlink em si (`ln -s`) segue o idioma POSIX padrão para esse tipo de instalador, mas não há ainda uma confirmação de ponta a ponta rodando fora de uma máquina Windows.
+- **`instalar.sh` foi validado num Ubuntu real (WSL)**, incluindo o symlink genuíno e a reexecução idempotente — mas ainda não num macOS de verdade. A única diferença conhecida é o `grep` padrão do macOS (BSD, não GNU); o script já usa regex POSIX básica para evitar esse problema, mas não há confirmação de ponta a ponta na prática.
 - **Links de vaga em plataformas de ATS** (Gupy, InHire, LinkedIn e afins) costumam bloquear requisição automatizada e retornar 403. Não é bug da skill, é bloqueio anti-bot — nesse caso, cole o texto ou salve a página como PDF e aponte o arquivo.
 - **A regra inegociável é hoje uma instrução, não uma verificação.** Não existe ainda uma checagem automática de que nenhum fato foi inventado — é a issue [#5](../../issues/5), ainda aberta.
 
