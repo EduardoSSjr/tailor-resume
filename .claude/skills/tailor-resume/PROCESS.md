@@ -4,14 +4,27 @@ Este documento descreve o processo completo usado pelas skills **tailor-resume**
 
 ## Configuração
 
-Antes de qualquer outro passo, leia `config.json` na raiz do repositório. É a única fonte de verdade sobre o ambiente local — nenhum passo abaixo usa caminho fixo. Campos:
+### Localizando a raiz do projeto
 
-- `raizDoProjeto` (obrigatório): caminho absoluto da raiz deste repositório.
+Antes de qualquer outro passo, descubra onde está a raiz do repositório — é lá que fica o `config.json`. Nunca use um caminho lembrado, citado em outro arquivo ou deduzido do diretório de trabalho atual: a única âncora confiável é **a pasta da skill que te invocou** (o "base directory" informado quando a skill foi carregada).
+
+Essa pasta normalmente é um **link** (junction no Windows, symlink no Linux/macOS) criado pelo instalador em `~/.claude/skills/`, apontando para dentro do repositório. Subir `..` a partir do caminho do link não funciona — o `..` é resolvido sobre o texto do caminho e cai em `~/.claude/skills/`, não no repositório. Por isso, resolva primeiro o caminho real:
+
+- **Windows** (PowerShell): `(Get-Item -LiteralPath '<pasta da skill>' -Force).Target`. Se o resultado vier **vazio**, a pasta não é um link (a skill foi carregada direto do repositório) — use o próprio caminho da pasta.
+- **Linux/macOS** (Bash): `cd -P '<pasta da skill>' && pwd`. Funciona igual para link e para pasta real.
+
+A raiz do projeto é o caminho real obtido acima **subindo três níveis** (`<raiz>/.claude/skills/<nome-da-skill>`). O arquivo de configuração é `<raiz>/config.json`.
+
+### Lendo o config.json
+
+Leia `<raiz>/config.json`. É a única fonte de verdade sobre o ambiente local — nenhum passo abaixo usa caminho fixo. Campos:
+
+- `raizDoProjeto` (obrigatório): caminho absoluto da raiz deste repositório, escrito pelo instalador. Serve de conferência: precisa apontar para a mesma pasta que a raiz resolvida acima (ignore diferença de maiúsculas/minúsculas e de separador `\`/`/`). Se apontar para outra pasta, o repositório foi movido ou clonado de novo sem rodar o instalador — pare e peça para o usuário rodar o instalador de novo, em vez de escolher uma das duas.
 - `arquivoCurriculo` (obrigatório): nome do arquivo de currículo dentro de `meu-curriculo/`, relativo a essa pasta (ex: `"curriculo.tex"`).
 - `maximoDePaginas` (obrigatório): inteiro — quantas páginas o currículo final pode ter. Usado no passo 10.
 - `caminhoPdflatex` (opcional): caminho do executável `pdflatex`. Vazio ou ausente significa "buscar no PATH" — ver passo 9.
 
-**Se `config.json` não existir, ou se `raizDoProjeto`, `arquivoCurriculo` ou `maximoDePaginas` estiverem ausentes ou inválidos**: pare imediatamente e informe ao usuário — algo como "Não encontrei um `config.json` válido na raiz do projeto. Copie `config.example.json` para `config.json` e preencha os campos com os valores do seu ambiente." (Se algum instalador automático existir no repositório no momento, cite-o em vez disso.) Nunca adivinhe a raiz do projeto nem o nome do arquivo de currículo — um caminho errado escrito silenciosamente é pior que uma execução que não começa.
+**Se `config.json` não existir, ou se `raizDoProjeto`, `arquivoCurriculo` ou `maximoDePaginas` estiverem ausentes ou inválidos**: pare imediatamente e informe ao usuário — algo como "Não encontrei um `config.json` válido na raiz do projeto (`<raiz>`). Rode o instalador na raiz do repositório — `.\instalar.ps1` no Windows, `./instalar.sh` no Linux/macOS — para gerá-lo." Nunca adivinhe a raiz do projeto nem o nome do arquivo de currículo — um caminho errado escrito silenciosamente é pior que uma execução que não começa.
 
 Nos passos abaixo, "a raiz do projeto" e "o currículo-base" se referem sempre aos valores lidos aqui.
 
@@ -116,11 +129,16 @@ O nome de um `\project{}` é um rótulo que o próprio usuário deu ao projeto (
 
    Escreva o novo `.tex` em `curriculo.tex` dentro dessa pasta.
 
-9. **Compile o PDF**: rode `pdflatex -interaction=nonstopmode -output-directory=<pasta-da-aplicação> curriculo.tex` de dentro da pasta da aplicação. Tente primeiro `pdflatex` direto (assumindo que está no PATH); se não for encontrado e `caminhoPdflatex` estiver preenchido no `config.json`, use esse caminho. Se não estiver no PATH e `caminhoPdflatex` também estiver vazio, pare e avise o usuário para preencher esse campo — não tente adivinhar uma instalação.
+9. **Compile o PDF**: rode `pdflatex -interaction=nonstopmode "-output-directory=<pasta-da-aplicação>" curriculo.tex` de dentro da pasta da aplicação. Mantenha as aspas em volta de **todo** o argumento `-output-directory=...`, não só do caminho: no Windows PowerShell 5.1, sem elas, um argumento nativo começando com `-` é partido no primeiro `.` — o `pdflatex` recebe o resto como arquivo de entrada, aborta e deixa um `texput.log` para trás. Tente primeiro `pdflatex` direto (assumindo que está no PATH); se não for encontrado e `caminhoPdflatex` estiver preenchido no `config.json`, use esse caminho. Se não estiver no PATH e `caminhoPdflatex` também estiver vazio, pare e avise o usuário para preencher esse campo — não tente adivinhar uma instalação.
 
    Rode até 2 vezes se necessário para resolver referências. Se a compilação falhar, leia o `.log` gerado, corrija o `.tex` e recompile — no máximo **3 tentativas de correção** no total. Se ainda assim não compilar, pare, explique o erro ao usuário e não entregue um PDF quebrado.
 
-10. **Aplique a regra de páginas.** Depois de compilar com sucesso, confira a contagem de páginas que o `pdflatex` imprime na forma `(N page, ...)` / `(N pages, ...)`, no stdout ou no `.log`. Extraia com um padrão como `grep -oE "\([0-9]+ pages?," curriculo.log` — não procure pela linha inteira `Output written on ...`, porque quando o caminho da pasta é longo essa linha pode quebrar no meio (o parêntese com a contagem de páginas, porém, sempre fica intacto). Compare `N` contra `maximoDePaginas` (do `config.json`).
+10. **Aplique a regra de páginas.** Depois de compilar com sucesso, confira a contagem de páginas que o `pdflatex` imprime na forma `(N page, ...)` / `(N pages, ...)`, no stdout ou no `.log`. O TeX quebra as linhas do `.log` a cada 79 caracteres sem olhar o conteúdo, e com o caminho absoluto da pasta a linha `Output written on ...` quase sempre passa disso — a quebra pode cair **no meio** da contagem (ex: `(1 pag` numa linha, `e, 97565 bytes)` na seguinte). Por isso, **junte as linhas do log antes de buscar o padrão**:
+
+    - Bash: `tr -d '\r\n' < curriculo.log | grep -oE '\([0-9]+ pages?,'`
+    - PowerShell: `[regex]::Match(((Get-Content curriculo.log -Raw) -replace '\r?\n', ''), '\((\d+) pages?,').Groups[1].Value`
+
+    Nunca rode o padrão linha a linha sobre o `.log` cru: ele funciona com caminhos curtos e falha em silêncio com caminhos longos. Compare `N` contra `maximoDePaginas` (do `config.json`).
 
     - Se **N ≤ maximoDePaginas**, siga direto para a limpeza de arquivos auxiliares, abaixo.
     - Se **N > maximoDePaginas**, corte o item editável menos relevante à vaga que ainda está no `.tex` — um bullet de `Perfil e Competências`, de Experiência ou de Projetos. **Nunca** corte conteúdo de seção fixa, e nunca remova um `\role{...}` ou `\project{...}` inteiro (a vaga/empresa/data em si é fixa; só os bullets dentro dele são editáveis). Recompile e confira a contagem de novo. Repita até caber.

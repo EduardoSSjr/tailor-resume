@@ -27,13 +27,6 @@ Siga **integralmente** o processo descrito em `PROCESS.md`, no mesmo diretório 
 
 ## Instalação
 
-Esta skill é instalada globalmente via **junction do NTFS** (`mklink /J`), não por cópia: `C:\Users\edxlty\.claude\skills\tailor-resume` aponta para `C:\Users\edxlty\projects\tailor-resume\.claude\skills\tailor-resume`. Isso mantém o repositório do projeto como única fonte de verdade — qualquer edição neste arquivo já vale globalmente, sem precisar reinstalar nem sincronizar duas cópias — e permite que a skill seja reconhecida em qualquer pasta de trabalho aberta no Claude Code nesta máquina (CLI, app desktop ou extensão de IDE), não só dentro deste projeto.
+Esta skill é instalada globalmente por **link, não por cópia**: o instalador do repositório (`instalar.ps1` no Windows, `instalar.sh` no Linux/macOS) cria `~/.claude/skills/tailor-resume` apontando para esta pasta — junction no Windows, que não exige privilégio de administrador, e symlink no Linux/macOS. Isso mantém o repositório como única fonte de verdade: editar este arquivo já vale globalmente, e a skill é reconhecida em qualquer pasta aberta no Claude Code, não só dentro do projeto.
 
-Symlink normal (`New-Item -ItemType SymbolicLink`) exige privilégio de administrador no Windows; a junction não exige. Se a junction for perdida (ex: reinstalação do Windows, nova máquina), recrie com:
-
-```powershell
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Out-Null
-cmd /c mklink /J "$env:USERPROFILE\.claude\skills\tailor-resume" "$env:USERPROFILE\projects\tailor-resume\.claude\skills\tailor-resume"
-```
-
-Validado com smoke test: rodando `claude -p` a partir de uma pasta fora do projeto, tanto o gatilho automático (colar uma vaga) quanto o comando explícito `/tailor-resume` reconheceram a skill corretamente e geraram a saída nos caminhos absolutos certos do projeto (`aplicacoes/`, `meu-curriculo/<arquivoCurriculo>`), nunca relativos à pasta de onde a sessão foi aberta.
+Por causa do link, o caminho desta pasta não revela sozinho onde está o repositório — a seção "Localizando a raiz do projeto" do `PROCESS.md` explica como resolvê-lo. Se o link for perdido (reinstalação, máquina nova, repositório movido), rode o instalador de novo — ele é idempotente.

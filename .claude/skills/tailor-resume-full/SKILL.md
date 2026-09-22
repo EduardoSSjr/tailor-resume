@@ -24,9 +24,4 @@ Siga **integralmente** o processo descrito em `../tailor-resume/PROCESS.md` (cam
 
 ## Instalação
 
-Instalada globalmente via **junction do NTFS**, no mesmo padrão da `tailor-resume` (ver a seção "Instalação" do `SKILL.md` dela para o racional completo): `C:\Users\edxlty\.claude\skills\tailor-resume-full` aponta para `C:\Users\edxlty\projects\tailor-resume\.claude\skills\tailor-resume-full`. Se a junction for perdida, recrie com:
-
-```powershell
-New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.claude\skills" | Out-Null
-cmd /c mklink /J "$env:USERPROFILE\.claude\skills\tailor-resume-full" "$env:USERPROFILE\projects\tailor-resume\.claude\skills\tailor-resume-full"
-```
+Instalada globalmente por link, pelo mesmo instalador e no mesmo padrão da `tailor-resume` (ver a seção "Instalação" do `SKILL.md` dela). Para localizar a raiz do projeto, resolva o link **desta** pasta, conforme o `PROCESS.md`. Se o link for perdido, rode o instalador de novo.

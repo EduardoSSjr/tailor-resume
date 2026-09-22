@@ -79,7 +79,7 @@ cd tailor-resume
 
 Coloque seu currículo em `meu-curriculo/` (a pasta é ignorada pelo git por inteiro — nada de dado pessoal é versionado, não importa o nome do arquivo). Um exemplo de currículo, com a estrutura e as macros que o processo espera, está em `template/curriculo-exemplo.tex`.
 
-Rode o instalador do seu sistema — ele pergunta o nome do seu arquivo de currículo e o limite de páginas (reaproveitando um `config.json` existente como sugestão, se você rodar de novo), detecta o `pdflatex` sozinho se estiver no PATH (só pergunta o caminho se não achar), escreve o `config.json` e cria o link global de cada skill (junction no Windows, symlink no Linux/macOS). Pode rodar de novo a qualquer momento para atualizar essas respostas, sem duplicar nada:
+Rode o instalador do seu sistema — ele pergunta o nome do seu arquivo de currículo e o limite de páginas (reaproveitando um `config.json` existente como sugestão, se você rodar de novo), detecta o `pdflatex` sozinho se estiver no PATH (só pergunta o caminho se não achar), escreve o `config.json` e cria o link global de cada skill (junction no Windows, symlink no Linux/macOS). Pode rodar de novo a qualquer momento para atualizar essas respostas, sem duplicar nada — e **precisa** rodar de novo se mover ou reclonar o repositório: a skill confere se o `config.json` aponta para a mesma pasta em que ela está instalada, e para com um aviso em vez de usar um caminho velho:
 
 ```powershell
 # Windows
